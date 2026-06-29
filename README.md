@@ -1,5 +1,11 @@
 # Konstanta — Recruitment Platform
 
+[![CI](https://github.com/LordClaus/konstanta-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/LordClaus/konstanta-platform/actions/workflows/ci.yml)
+![Python](https://img.shields.io/badge/python-3.12-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-async-009688)
+![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-2.0-red)
+![Tests](https://img.shields.io/badge/tests-29%20passing-brightgreen)
+
 A production-style recruitment platform built as a **modular monolith**:
 a **FastAPI** backend (async **SQLAlchemy 2.0** + **Alembic**), an in-process
 **Telegram bot** for managers, a pluggable **AI assistant** (OpenAI / Gemini),
