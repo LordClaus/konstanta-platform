@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://www.konstanta-agency.cz/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>
+  <url><loc>https://www.konstanta-agency.cz/pages/pro-nas.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.konstanta-agency.cz/pages/jak-to-funguje.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.konstanta-agency.cz/pages/faq.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.konstanta-agency.cz/legal/podminky.html</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://www.konstanta-agency.cz/legal/ochrana-udaju.html</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://www.konstanta-agency.cz/legal/cookies.html</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://www.konstanta-agency.cz/legal/oznamovatele.html</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+</urlset>

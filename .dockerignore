@@ -1,0 +1,35 @@
+# Keep the build context small and free of secrets.
+
+# Virtualenvs / build artifacts
+.venv/
+venv/
+**/__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local databases
+*.db
+*.sqlite3
+
+# Tests (not needed in the runtime image)
+backend/tests/
+
+# VCS / tooling
+.git/
+.gitignore
+.gitattributes
+.claude/
+.vscode/
+
+# Secrets — never bake real .env into the image.
+**/.env
+*.env
+
+# Frontend (static site; served separately, not needed in the API image)
+site/
+
+# Docs / misc
+*.md

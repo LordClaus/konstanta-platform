@@ -1,0 +1,26 @@
+[project]
+name = "konstanta-backend"
+version = "1.0.0"
+description = "Konstanta recruitment platform — FastAPI + async SQLAlchemy 2.0 modular monolith"
+requires-python = ">=3.12"
+
+[tool.pytest.ini_options]
+# asyncio_mode = auto lets plain `async def test_*` run without per-test markers.
+asyncio_mode = "auto"
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+# Alembic migrations are generated; don't lint them.
+extend-exclude = ["alembic/versions"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+ignore = ["B008"]  # FastAPI uses `Depends(...)` as a default — idiomatic, not a bug
+
+[tool.ruff.lint.per-file-ignores]
+# Localized message tables read best as single lines.
+"app/services/notification_service.py" = ["E501"]

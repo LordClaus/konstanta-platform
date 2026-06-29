@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint-and-test:
+    name: Lint + unit/e2e tests (SQLite)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+      - name: Ruff (lint)
+        run: ruff check .
+      - name: Pytest (unit + e2e)
+        run: pytest
+
+  migrations:
+    name: Alembic migrations apply cleanly (PostgreSQL)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: konstanta
+          POSTGRES_PASSWORD: konstanta
+          POSTGRES_DB: konstanta
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U konstanta"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      DATABASE_URL: postgresql+asyncpg://konstanta:konstanta@localhost:5432/konstanta
+      JWT_SECRET: ci-secret-that-is-at-least-32-bytes-long!!
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Apply migrations
+        run: alembic upgrade head
+      - name: Verify schema matches models (no pending diffs)
+        run: alembic check

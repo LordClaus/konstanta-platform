@@ -1,0 +1,106 @@
+/* Content pages typography — KONSTANTA (accent: gold) */
+:root {
+    --pg-accent: #b8941f;
+    --pg-accent-dark: #e6c867;
+}
+
+.page-body { line-height: 1.75; }
+.page-body .lead {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #1a2b4b;
+    margin: 0 0 1.5rem;
+}
+.dark .page-body .lead { color: #e2e8f0; }
+
+.page-body h2 {
+    font-size: 1rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 2rem 0 0.75rem;
+    color: #1a2b4b;
+}
+.dark .page-body h2 { color: #ffffff; }
+.page-body p { margin: 0 0 1rem; }
+.page-body ul { margin: 0 0 1rem 1.15rem; list-style: disc; }
+.page-body li { margin-bottom: 0.5rem; }
+.page-body a { color: var(--pg-accent); text-decoration: underline; font-weight: 600; }
+.dark .page-body a { color: var(--pg-accent-dark); }
+.page-body strong { color: #1a2b4b; font-weight: 700; }
+.dark .page-body strong { color: #e2e8f0; }
+
+/* How-it-works numbered steps */
+ol.steps {
+    list-style: none;
+    counter-reset: step;
+    margin: 0;
+    padding: 0;
+}
+ol.steps li {
+    counter-increment: step;
+    position: relative;
+    padding: 0 0 1.25rem 3.25rem;
+    margin: 0;
+}
+ol.steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: -0.1rem;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.75rem;
+    background: var(--pg-accent);
+    color: #fff;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.dark ol.steps li::before { background: var(--pg-accent-dark); color: #1a2b4b; }
+
+/* FAQ accordion (native <details>) */
+.faq-item {
+    border: 1px solid rgb(226 232 240);
+    border-radius: 0.85rem;
+    margin-bottom: 0.6rem;
+    overflow: hidden;
+    background: #fff;
+}
+.dark .faq-item { border-color: rgb(30 41 59); background: rgb(15 23 42); }
+.faq-item summary {
+    cursor: pointer;
+    padding: 1rem 1.1rem;
+    font-weight: 700;
+    color: #1a2b4b;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+.dark .faq-item summary { color: #fff; }
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after {
+    content: '+';
+    color: var(--pg-accent);
+    font-weight: 800;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+.dark .faq-item summary::after { color: var(--pg-accent-dark); }
+.faq-item[open] summary::after { content: '−'; }
+.faq-answer {
+    padding: 0 1.1rem 1.1rem;
+    color: rgb(71 85 105);
+    line-height: 1.7;
+}
+.dark .faq-answer { color: rgb(148 163 184); }
+
+/* Language switch buttons (shared visual with legal pages) */
+.legal-lang { color: #64748b; transition: all 0.15s ease; }
+.legal-lang:hover { color: var(--pg-accent); }
+.dark .legal-lang:hover { color: var(--pg-accent-dark); }
+.legal-lang-active { background: var(--pg-accent); color: #ffffff !important; }
+.dark .legal-lang-active { background: var(--pg-accent-dark); color: #1a2b4b !important; }

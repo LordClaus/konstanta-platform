@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KONSTANTA — Manager CRM</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="admin.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1a2b4b',
+                        accent: { DEFAULT: '#d4af37', light: '#e6c867' }
+                    },
+                    fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui'] }
+                }
+            }
+        }
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     LOGIN OVERLAY
+════════════════════════════════════════════════════════════════════════════ -->
+<div id="login-overlay">
+    <div class="login-card glass-strong">
+
+        <!-- Logo -->
+        <div class="login-logo">KS</div>
+
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-black text-white uppercase tracking-tight mb-1">KONSTANTA CRM</h1>
+            <p class="text-sm font-semibold" style="color:var(--text-muted)">Manager Portal — Secure Access</p>
+        </div>
+
+        <div class="space-y-4">
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-widest mb-2" style="color:var(--text-muted)">Username</label>
+                <div class="input-wrapper">
+                    <i data-lucide="user" class="input-icon"></i>
+                    <input id="login-name" type="text" class="form-input pl-10" placeholder="Enter your username" autocomplete="username">
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-widest mb-2" style="color:var(--text-muted)">Password</label>
+                <div class="input-wrapper">
+                    <i data-lucide="lock" class="input-icon"></i>
+                    <input id="login-password" type="password" class="form-input pl-10" placeholder="••••••••" autocomplete="current-password">
+                </div>
+            </div>
+
+            <div id="login-error" class="login-error">
+                <i data-lucide="alert-circle" class="w-4 h-4 inline mr-1"></i>
+                <span id="login-error-text">Invalid credentials. Please try again.</span>
+            </div>
+
+            <button id="btn-login" class="btn-primary mt-2">
+                <i data-lucide="log-in" class="w-4 h-4"></i>
+                Access Dashboard
+            </button>
+        </div>
+
+        <p class="text-center text-xs mt-6" style="color:var(--text-muted)">
+            KONSTANTA &nbsp;·&nbsp; Internal Use Only
+        </p>
+    </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     DASHBOARD (hidden until login)
+════════════════════════════════════════════════════════════════════════════ -->
+<div id="dashboard" class="hidden">
+
+    <!-- ── Header ─────────────────────────────────────────────────────────── -->
+    <header id="admin-header">
+        <div class="header-logo">
+            <div class="header-logo-icon">KS</div>
+            <div>
+                <div class="text-sm font-black text-white uppercase tracking-tight leading-none">KONSTANTA</div>
+                <div class="text-xs font-bold uppercase tracking-widest" style="color:var(--accent)">CRM Panel</div>
+            </div>
+        </div>
+
+        <div class="header-meta">
+            <!-- Sync indicator -->
+            <div id="sync-indicator" class="sync-indicator hidden">
+                <i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin" style="color:var(--accent)"></i>
+                <span>Syncing…</span>
+            </div>
+
+            <!-- Real-time clock -->
+            <div id="clock" class="clock-display">00:00:00</div>
+
+            <!-- Connection status badge -->
+            <div id="connection-badge" class="connection-badge disconnected">
+                <div class="connection-dot"></div>
+                <span id="connection-label">Offline</span>
+            </div>
+
+            <!-- Manager badge -->
+            <div class="manager-badge">
+                <div class="manager-avatar" id="manager-avatar">?</div>
+                <span id="manager-display-name" class="text-sm font-semibold text-white">—</span>
+            </div>
+
+            <!-- Logout -->
+            <button id="btn-logout" class="btn-logout">
+                <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                Logout
+            </button>
+        </div>
+    </header>
+
+    <!-- ── Main Content ────────────────────────────────────────────────────── -->
+    <main id="main-content">
+
+        <!-- ── Tab Navigation ──────────────────────────────────────────────── -->
+        <nav class="tab-nav">
+            <button class="tab-btn active" data-tab="applications">
+                <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                <span>Applications</span>
+            </button>
+            <button class="tab-btn" data-tab="jobs">
+                <i data-lucide="briefcase" class="w-4 h-4"></i>
+                <span>Jobs Management</span>
+            </button>
+            <button class="tab-btn" data-tab="categories">
+                <i data-lucide="tags" class="w-4 h-4"></i>
+                <span>Categories</span>
+            </button>
+        </nav>
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             APPLICATIONS TAB
+        ═══════════════════════════════════════════════════════════════════ -->
+        <section id="tab-applications" class="tab-panel">
+
+        <div class="page-header">
+            <div>
+                <h2 class="text-xl font-black text-white uppercase tracking-tight">Application Board</h2>
+                <p class="text-sm mt-0.5" style="color:var(--text-muted)">
+                    Real-time Kanban · WebSocket connected · <span id="total-count">0</span> total applications
+                </p>
+            </div>
+            <button id="btn-refresh" class="btn-ghost" title="Force re-sync from database">
+                <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                <span>Re-sync DB</span>
+            </button>
+        </div>
+
+        <!-- ── Kanban Board ──────────────────────────────────────────────── -->
+        <div class="kanban-board">
+
+            <!-- 🔥 NEW -->
+            <div class="kanban-column col-new">
+                <div class="column-header">
+                    <div class="column-title">
+                        <span>🔥</span> New
+                    </div>
+                    <div class="column-count" id="count-new">0</div>
+                </div>
+                <div class="column-cards" id="col-new"></div>
+            </div>
+
+            <!-- ⚙️ IN PROGRESS -->
+            <div class="kanban-column col-processing">
+                <div class="column-header">
+                    <div class="column-title">
+                        <span>⚙️</span> In Progress
+                    </div>
+                    <div class="column-count" id="count-processing">0</div>
+                </div>
+                <div class="column-cards" id="col-processing"></div>
+            </div>
+
+            <!-- ✅ COMPLETED -->
+            <div class="kanban-column col-completed">
+                <div class="column-header">
+                    <div class="column-title">
+                        <span>✅</span> Completed
+                    </div>
+                    <div class="column-count" id="count-completed">0</div>
+                </div>
+                <div class="column-cards" id="col-completed"></div>
+            </div>
+
+        </div>
+        </section>
+        <!-- /APPLICATIONS TAB -->
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             JOBS MANAGEMENT TAB
+        ═══════════════════════════════════════════════════════════════════ -->
+        <section id="tab-jobs" class="tab-panel hidden">
+
+            <div class="page-header">
+                <div>
+                    <h2 class="text-xl font-black text-white uppercase tracking-tight">Jobs Management</h2>
+                    <p class="text-sm mt-0.5" style="color:var(--text-muted)">
+                        Public job openings shown on the website · <span id="jobs-total-count">0</span> active
+                    </p>
+                </div>
+                <button id="btn-add-job" class="btn-add-job">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                    <span>Add Job</span>
+                </button>
+            </div>
+
+            <div id="jobs-list" class="jobs-list"></div>
+
+        </section>
+        <!-- /JOBS MANAGEMENT TAB -->
+
+        <!-- ══════════════════════════════════════════════════════════════════
+             CATEGORIES TAB
+        ═══════════════════════════════════════════════════════════════════ -->
+        <section id="tab-categories" class="tab-panel hidden">
+
+            <div class="page-header">
+                <div>
+                    <h2 class="text-xl font-black text-white uppercase tracking-tight">Categories</h2>
+                    <p class="text-sm mt-0.5" style="color:var(--text-muted)">
+                        Job categories / website filters · <span id="categories-total-count">0</span> total
+                    </p>
+                </div>
+                <button id="btn-add-category" class="btn-add-job">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                    <span>Add Category</span>
+                </button>
+            </div>
+
+            <div id="categories-list" class="jobs-list"></div>
+
+        </section>
+        <!-- /CATEGORIES TAB -->
+
+    </main>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     JOB EDITOR MODAL (create / edit)
+════════════════════════════════════════════════════════════════════════════ -->
+<div id="job-modal-overlay" class="job-modal-overlay hidden">
+    <div class="job-modal glass-strong">
+        <div class="job-modal-header">
+            <h3 id="job-modal-title">Add Job</h3>
+            <button id="job-modal-close" class="job-modal-close" aria-label="Close">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+        </div>
+
+        <form id="job-form" class="job-form" autocomplete="off">
+            <input type="hidden" id="job-id">
+
+            <div class="job-form-grid">
+                <div class="job-field">
+                    <label for="job-title-ua">Title (UA) <span class="req">*</span></label>
+                    <input id="job-title-ua" class="form-input" placeholder="Водії автомобілів" required>
+                </div>
+                <div class="job-field">
+                    <label for="job-title-cz">Title (CZ) <span class="req">*</span></label>
+                    <input id="job-title-cz" class="form-input" placeholder="Řidiči automobilů" required>
+                </div>
+                <div class="job-field">
+                    <label for="job-title-en">Title (EN) <span class="req">*</span></label>
+                    <input id="job-title-en" class="form-input" placeholder="Delivery Drivers" required>
+                </div>
+
+                <div class="job-field">
+                    <label for="job-type">Type / Filter <span class="req">*</span></label>
+                    <select id="job-type" class="form-input" required>
+                        <option value="Factory">Factory</option>
+                        <option value="Warehouse">Warehouse</option>
+                        <option value="Cleaning">Cleaning</option>
+                        <option value="Drivers">Drivers</option>
+                    </select>
+                </div>
+                <div class="job-field">
+                    <label for="job-salary">Salary</label>
+                    <input id="job-salary" class="form-input" placeholder="35 000 – 45 000 Kč">
+                </div>
+
+                <div class="job-field job-field-full">
+                    <label>Cities <span class="req">*</span> <span style="font-weight:400;color:var(--text-muted)">— tick «housing» where accommodation is provided</span></label>
+                    <div id="job-cities"></div>
+                    <button type="button" id="btn-add-city" class="btn-ghost" style="margin-top:0.5rem;">
+                        <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add city
+                    </button>
+                </div>
+
+                <div class="job-field job-field-full">
+                    <label for="job-description">Description</label>
+                    <textarea id="job-description" class="form-input" rows="3" placeholder="Short description of the position…"></textarea>
+                </div>
+
+                <div class="job-field job-field-full">
+                    <label for="job-image">Photo (optional — JPEG/PNG/WebP, max 5 MB)</label>
+                    <input id="job-image" type="file" class="form-input" accept="image/jpeg,image/png,image/webp">
+                    <small style="color:var(--text-muted)">On edit, leave empty to keep the current photo.</small>
+                </div>
+
+                <div class="job-field job-field-full">
+                    <label class="job-checkbox">
+                        <input type="checkbox" id="job-is-new" checked>
+                        <span>Mark as NEW (green pulse on the website)</span>
+                    </label>
+                </div>
+
+                <div class="job-field job-field-full">
+                    <label>Where to publish <span class="req">*</span></label>
+                    <label class="job-checkbox">
+                        <input type="checkbox" id="job-site-konstanta" checked>
+                        <span>Konstanta (konstanta-agency.cz)</span>
+                    </label>
+                    <label class="job-checkbox">
+                        <input type="checkbox" id="job-site-robota" checked>
+                        <span>Чехія Робота</span>
+                    </label>
+                    <small style="color:var(--text-muted)">Choose one or both candidate sites.</small>
+                </div>
+            </div>
+
+            <div id="job-form-error" class="job-form-error"></div>
+
+            <div class="job-modal-actions">
+                <button type="button" id="job-cancel" class="btn-ghost">Cancel</button>
+                <button type="submit" id="job-save" class="btn-primary" style="width:auto;">
+                    <i data-lucide="save" class="w-4 h-4"></i>
+                    <span>Save Job</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     CATEGORY EDITOR MODAL (create / edit)
+════════════════════════════════════════════════════════════════════════════ -->
+<div id="category-modal-overlay" class="job-modal-overlay hidden">
+    <div class="job-modal glass-strong">
+        <div class="job-modal-header">
+            <h3 id="category-modal-title">Add Category</h3>
+            <button id="category-modal-close" class="job-modal-close" aria-label="Close">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+        </div>
+
+        <form id="category-form" class="job-form" autocomplete="off">
+            <input type="hidden" id="category-id">
+            <div class="job-form-grid">
+                <div class="job-field">
+                    <label for="category-label-ua">Name (UA) <span class="req">*</span></label>
+                    <input id="category-label-ua" class="form-input" placeholder="Завод" required>
+                </div>
+                <div class="job-field">
+                    <label for="category-label-cz">Name (CZ) <span class="req">*</span></label>
+                    <input id="category-label-cz" class="form-input" placeholder="Továrna" required>
+                </div>
+                <div class="job-field">
+                    <label for="category-label-en">Name (EN) <span class="req">*</span></label>
+                    <input id="category-label-en" class="form-input" placeholder="Factory" required>
+                </div>
+            </div>
+
+            <div id="category-form-error" class="job-form-error"></div>
+
+            <div class="job-modal-actions">
+                <button type="button" id="category-cancel" class="btn-ghost">Cancel</button>
+                <button type="submit" id="category-save" class="btn-primary" style="width:auto;">
+                    <i data-lucide="save" class="w-4 h-4"></i>
+                    <span>Save Category</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ── Toast Container ────────────────────────────────────────────────────── -->
+<div id="toast-container"></div>
+
+<!-- config.js defines window.APP_CONFIG (API/WS URLs) before admin.js runs -->
+<script src="config.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

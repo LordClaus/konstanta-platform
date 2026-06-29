@@ -1,0 +1,46 @@
+# Local stack: PostgreSQL + the API (which also runs the Telegram bot in-process).
+# Usage:  cp .env.example .env  &&  docker compose up --build
+# The API container runs `alembic upgrade head` on start, so the schema is always
+# in sync before it serves traffic.
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: konstanta
+      POSTGRES_PASSWORD: konstanta
+      POSTGRES_DB: konstanta
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U konstanta"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+asyncpg://konstanta:konstanta@db:5432/konstanta
+      JWT_SECRET: ${JWT_SECRET:-dev-secret-change-me-to-a-long-random-32b+}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:8000,http://localhost:5500}
+      AI_PROVIDER: ${AI_PROVIDER:-openai}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o-mini}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      BREVO_API_KEY: ${BREVO_API_KEY:-}
+      MAIL_FROM: ${MAIL_FROM:-}
+      MAIL_FROM_NAME: ${MAIL_FROM_NAME:-Konstanta}
+      BOT_TOKEN: ${BOT_TOKEN:-}
+      BOT_PROVISION_SECRET: ${BOT_PROVISION_SECRET:-}
+      PUBLIC_URL: ${PUBLIC_URL:-}
+    ports:
+      - "8000:8000"
+
+volumes:
+  pgdata:

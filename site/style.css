@@ -1,0 +1,125 @@
+:root {
+  --bg-main: #f1f5f9;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --card-bg: rgba(255, 255, 255, 0.85);
+  --border-color: rgba(226, 232, 240, 1);
+  --primary: #1a2b4b;
+  --accent: #d4af37;
+  --accent-light: #e6c867;
+}
+
+.dark {
+  --bg-main: #020617;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --card-bg: rgba(15, 23, 42, 0.7);
+  --border-color: rgba(30, 41, 59, 0.8);
+}
+
+body {
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  font-family: 'Inter', sans-serif;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.glass {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s;
+}
+
+.glass-card {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s;
+  border-radius: 1rem;
+}
+
+.glass-card:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+.animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }
+.animate-slide-in-left { animation: slideInLeft 0.6s ease-out forwards; }
+.animate-scale-up { animation: scaleUp 0.6s ease-out forwards; }
+
+/* Modal styles */
+.modal-overlay {
+  background-color: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+}
+
+/* Submit button: disabled = grey, enabled = branded colour */
+#btn-submit-apply:disabled {
+  background-color: #cbd5e1;
+  color: #94a3b8;
+  cursor: not-allowed;
+  opacity: 0.7;
+  transform: none;
+}
+
+#btn-submit-apply:not(:disabled) {
+  background-color: #1a2b4b;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+#btn-submit-apply:not(:disabled):hover {
+  transform: translateY(-2px);
+  opacity: 0.92;
+}
+
+.dark #btn-submit-apply:disabled {
+  background-color: #334155;
+  color: #64748b;
+}
+
+.dark #btn-submit-apply:not(:disabled) {
+  background-color: #d4af37;
+  color: #0f172a;
+}

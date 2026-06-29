@@ -1,0 +1,71 @@
+/* Legal pages typography — KONSTANTA (accent: gold) */
+:root {
+    --legal-accent: #b8941f;
+    --legal-accent-dark: #e6c867;
+}
+
+.legal-body {
+    line-height: 1.75;
+}
+.legal-body h2 {
+    font-size: 1rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 2rem 0 0.75rem;
+    color: #1a2b4b;
+}
+.dark .legal-body h2 {
+    color: #ffffff;
+}
+.legal-body p {
+    margin: 0 0 1rem;
+}
+.legal-body ul {
+    margin: 0 0 1rem 1.15rem;
+    list-style: disc;
+}
+.legal-body li {
+    margin-bottom: 0.4rem;
+}
+.legal-body a {
+    color: var(--legal-accent);
+    text-decoration: underline;
+    font-weight: 600;
+}
+.dark .legal-body a {
+    color: var(--legal-accent-dark);
+}
+.legal-body strong {
+    color: #1a2b4b;
+    font-weight: 700;
+}
+.dark .legal-body strong {
+    color: #e2e8f0;
+}
+.legal-meta {
+    font-size: 0.8rem;
+    font-style: italic;
+    opacity: 0.7;
+    margin-top: 2rem;
+}
+
+/* Language switch buttons */
+.legal-lang {
+    color: #64748b;
+    transition: all 0.15s ease;
+}
+.legal-lang:hover {
+    color: var(--legal-accent);
+}
+.dark .legal-lang:hover {
+    color: var(--legal-accent-dark);
+}
+.legal-lang-active {
+    background: var(--legal-accent);
+    color: #ffffff !important;
+}
+.dark .legal-lang-active {
+    background: var(--legal-accent-dark);
+    color: #1a2b4b !important;
+}
