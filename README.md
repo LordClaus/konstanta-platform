@@ -4,7 +4,7 @@
 ![Python](https://img.shields.io/badge/python-3.12-blue)
 ![FastAPI](https://img.shields.io/badge/FastAPI-async-009688)
 ![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-2.0-red)
-![Tests](https://img.shields.io/badge/tests-29%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-34%20passing-brightgreen)
 
 A production-style recruitment platform built as a **modular monolith**:
 a **FastAPI** backend (async **SQLAlchemy 2.0** + **Alembic**), an in-process
@@ -35,7 +35,8 @@ for candidates.
 | Tooling | Ruff · Docker · docker-compose · GitHub Actions CI |
 
 See **[ARCHITECTURE.md](ARCHITECTURE.md)** for the layering, request lifecycle, and
-design rationale.
+design rationale, and **[AI_ASSISTANT.md](AI_ASSISTANT.md)** for the prompt design
+and OpenAI integration (params, retries, error handling).
 
 ---
 
@@ -77,7 +78,7 @@ alembic check                   # CI gate: fails if models and migrations drift
 
 ```bash
 cd backend
-pytest          # 29 unit + e2e tests, runs on SQLite (no DB server needed)
+pytest          # 34 unit + e2e tests, runs on SQLite (no DB server needed)
 ruff check .    # lint
 ```
 

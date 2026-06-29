@@ -56,6 +56,10 @@ class Settings(BaseSettings):
     ai_provider: str = "openai"  # "openai" | "gemini"
     openai_api_key: str = ""
     openai_model: str = "gpt-4o-mini"
+    # Generation + transport knobs (12-factor; tuned without a redeploy).
+    openai_max_tokens: int = 600
+    openai_temperature: float = 0.4
+    openai_timeout_seconds: int = 20
     gemini_api_key: str = ""
     gemini_model: str = "gemini-2.0-flash"
 

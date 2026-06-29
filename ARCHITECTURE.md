@@ -154,3 +154,7 @@ drive both, and `alembic check` in CI fails the build if models and migrations d
 
 All four are optional: the API boots and the test suite runs green with none of
 them configured.
+
+The AI assistant (provider abstraction, prompt design, OpenAI integration with
+configurable params + bounded retry) is documented separately in
+**[AI_ASSISTANT.md](AI_ASSISTANT.md)**.
