@@ -29,5 +29,8 @@ Thumbs.db
 *.db-journal
 *.sqlite3
 
+# ── Local-only notes (never published) ───────────────────────────────────────
+*.local.md
+
 # ── Logs ──────────────────────────────────────────────────────────────────────
 *.log
