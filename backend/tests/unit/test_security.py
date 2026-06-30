@@ -48,3 +48,12 @@ def test_assert_adult_blocks_minors():
     assert exc.value.status_code == 400
     # An adult passes silently.
     security.assert_adult(date(today.year - 30, 1, 1))
+
+
+def test_verify_google_unconfigured_raises_500(monkeypatch):
+    from app.config import get_settings
+
+    monkeypatch.setattr(get_settings(), "google_client_id", None, raising=False)
+    with pytest.raises(HTTPException) as exc:
+        security.verify_google("any-id-token")
+    assert exc.value.status_code == 500

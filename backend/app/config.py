@@ -12,7 +12,14 @@ from __future__ import annotations
 
 from functools import lru_cache
 
+from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+# Defaults that are fine for dev/test but must never reach production.
+_INSECURE_JWT_SECRETS = {
+    "change-me-in-production",
+    "change-me-to-a-long-random-secret-min-32-bytes",
+}
 
 
 class Settings(BaseSettings):
@@ -96,6 +103,15 @@ class Settings(BaseSettings):
     @property
     def storage_configured(self) -> bool:
         return all([self.r2_endpoint, self.r2_key, self.r2_secret, self.r2_bucket, self.r2_public_url])
+
+    @model_validator(mode="after")
+    def _guard_production_secret(self) -> Settings:
+        """Fail fast rather than sign JWTs with a public default in production."""
+        if self.environment == "production" and (
+            self.jwt_secret in _INSECURE_JWT_SECRETS or len(self.jwt_secret) < 32
+        ):
+            raise ValueError("JWT_SECRET must be a strong (>= 32 char) secret in production")
+        return self
 
 
 @lru_cache

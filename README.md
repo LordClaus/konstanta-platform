@@ -4,7 +4,8 @@
 ![Python](https://img.shields.io/badge/python-3.12-blue)
 ![FastAPI](https://img.shields.io/badge/FastAPI-async-009688)
 ![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-2.0-red)
-![Tests](https://img.shields.io/badge/tests-40%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-61%20passing-brightgreen)
+![License](https://img.shields.io/badge/license-MIT-green)
 
 A production-style recruitment platform built as a **modular monolith**:
 a **FastAPI** backend (async **SQLAlchemy 2.0** + **Alembic**), an in-process
@@ -78,7 +79,7 @@ alembic check                   # CI gate: fails if models and migrations drift
 
 ```bash
 cd backend
-pytest          # 40 unit + e2e tests, runs on SQLite (no DB server needed)
+pytest          # 61 unit + e2e tests, runs on SQLite (no DB server needed)
 pytest --cov=app --cov-report=term-missing   # coverage (CI gate: --cov-fail-under=60)
 ruff check .    # lint
 mypy            # static type check (CI gate)
@@ -141,4 +142,11 @@ konstanta-platform/
 
 All configuration is environment-driven (12-factor); see **[.env.example](.env.example)**.
 Every external integration (AI, email, Telegram, object storage) is **optional** —
-the API boots and the test suite passes with none of them set.
+the API boots and the test suite passes with none of them set. In `production`,
+startup fails fast if `JWT_SECRET` is left at a weak/default value.
+
+---
+
+## License
+
+[MIT](LICENSE)
