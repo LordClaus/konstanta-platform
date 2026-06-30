@@ -17,12 +17,16 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements-dev.txt
       - name: Install dependencies
         run: pip install -r requirements-dev.txt
       - name: Ruff (lint)
         run: ruff check .
-      - name: Pytest (unit + e2e)
-        run: pytest
+      - name: Mypy (type check)
+        run: mypy
+      - name: Pytest (unit + e2e) with coverage
+        run: pytest --cov=app --cov-report=term-missing --cov-fail-under=60
 
   migrations:
     name: Alembic migrations apply cleanly (PostgreSQL)
@@ -52,6 +56,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Apply migrations

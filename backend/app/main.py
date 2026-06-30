@@ -20,6 +20,7 @@ from slowapi.errors import RateLimitExceeded
 from app import models  # noqa: F401  — registers every model on Base.metadata
 from app.config import get_settings
 from app.core.cache import AppCache
+from app.core.middleware import RequestContextMiddleware, SecurityHeadersMiddleware
 from app.core.rate_limit import limiter
 from app.db.base import Base
 from app.db.session import get_engine, get_sessionmaker, init_engine
@@ -82,11 +83,19 @@ async def lifespan(app: FastAPI):
 
 def create_app() -> FastAPI:
     settings = get_settings()
-    app = FastAPI(title=settings.app_name, version="1.0.0", lifespan=lifespan)
+    app = FastAPI(
+        title=settings.app_name,
+        version="1.0.0",
+        description=(
+            "Recruitment platform API (modular monolith). Public read endpoints are "
+            "cache-served with ETag/Cache-Control; staff routes use JWT + role gating."
+        ),
+        lifespan=lifespan,
+    )
 
     # Rate limiting (slowapi) — brute-force protection on auth/AI/subscribe routes.
     app.state.limiter = limiter
-    app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+    app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)  # type: ignore[arg-type]
 
     # CORS: restricted to the known frontend origins. Credentials off — auth uses
     # the Authorization (Bearer) header, not cookies.
@@ -96,7 +105,12 @@ def create_app() -> FastAPI:
         allow_credentials=False,
         allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allow_headers=["Content-Type", "Authorization"],
+        expose_headers=["X-Request-ID", "ETag"],
     )
+
+    # Correlation id + access logging, and conservative security headers.
+    app.add_middleware(RequestContextMiddleware)
+    app.add_middleware(SecurityHeadersMiddleware)
 
     for module in (
         health, staff_auth, candidate_auth, jobs, categories, reviews,

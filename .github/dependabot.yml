@@ -1,0 +1,17 @@
+version: 2
+updates:
+  # Python dependencies (requirements.txt + requirements-dev.txt live in backend/).
+  - package-ecosystem: pip
+    directory: /backend
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      python-deps:
+        patterns: ["*"]
+
+  # Keep the GitHub Actions in the CI workflow current.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

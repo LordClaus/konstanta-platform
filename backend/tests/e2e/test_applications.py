@@ -25,3 +25,22 @@ def test_my_applications_requires_auth(client):
 
 def test_sync_db_requires_staff(client):
     assert client.get("/sync-db").status_code in (401, 403)
+
+
+def test_sync_db_pagination(client, admin_headers):
+    for i in range(3):
+        client.post("/apply", json={"name": f"Pager {i}", "phone": "+420555000"})
+
+    page = client.get("/sync-db", params={"limit": 2}, headers=admin_headers)
+    assert page.status_code == 200
+    assert len(page.json()) <= 2
+
+    # Out-of-range limit is rejected by validation.
+    assert client.get("/sync-db", params={"limit": 0}, headers=admin_headers).status_code == 422
+    assert client.get("/sync-db", params={"limit": 999}, headers=admin_headers).status_code == 422
+
+
+def test_responses_carry_request_id_and_security_headers(client):
+    r = client.get("/")
+    assert r.headers.get("X-Request-ID")
+    assert r.headers.get("X-Content-Type-Options") == "nosniff"

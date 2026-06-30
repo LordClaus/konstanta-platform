@@ -11,6 +11,15 @@ testpaths = ["tests"]
 pythonpath = ["."]
 addopts = "-q"
 
+[tool.coverage.run]
+source = ["app"]
+omit = ["tests/*", "alembic/*"]
+
+[tool.mypy]
+python_version = "3.12"
+files = ["app"]
+ignore_missing_imports = true   # third-party stubs (aiogram, slowapi, boto3…) absent
+
 [tool.ruff]
 line-length = 120
 target-version = "py312"

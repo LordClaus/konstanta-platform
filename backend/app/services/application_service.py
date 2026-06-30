@@ -84,8 +84,12 @@ async def get_my_applications(session: AsyncSession, email: str) -> list[dict[st
     ]
 
 
-async def list_all(session: AsyncSession) -> list[dict[str, Any]]:
-    rows = (await session.execute(select(Application).order_by(Application.created_at.desc()))).scalars().all()
+async def list_all(session: AsyncSession, limit: int = 100, offset: int = 0) -> list[dict[str, Any]]:
+    """One page of applications, newest-first. Bounded by ``limit`` so the CRM
+    dump can't grow into an unbounded full-table read as the table fills up."""
+    rows = (await session.execute(
+        select(Application).order_by(Application.created_at.desc()).limit(limit).offset(offset)
+    )).scalars().all()
     return [
         {
             "id": a.id, "name": a.name, "phone": a.phone, "email": a.email,
@@ -120,7 +124,8 @@ async def perform_lock(application_id, manager_name: str) -> tuple[bool, str | N
             )
             await session.commit()
 
-            if result.rowcount and result.rowcount > 0:
+            affected = result.rowcount  # type: ignore[attr-defined]  # CursorResult at runtime
+            if affected and affected > 0:
                 log.info("Manager %s locked application %s", manager_name, application_id)
                 await manager.broadcast({
                     "event": "ticket_locked",
@@ -172,7 +177,8 @@ async def perform_complete(application_id, manager_name) -> tuple[bool, str | No
                 .values(status="completed")
             )
             await session.commit()
-            if result.rowcount and result.rowcount > 0:
+            affected = result.rowcount  # type: ignore[attr-defined]  # CursorResult at runtime
+            if affected and affected > 0:
                 log.info("Manager %s completed application %s", manager_name, application_id)
                 await manager.broadcast({
                     "event": "ticket_completed",

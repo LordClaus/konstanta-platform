@@ -4,7 +4,7 @@
 ![Python](https://img.shields.io/badge/python-3.12-blue)
 ![FastAPI](https://img.shields.io/badge/FastAPI-async-009688)
 ![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-2.0-red)
-![Tests](https://img.shields.io/badge/tests-34%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-39%20passing-brightgreen)
 
 A production-style recruitment platform built as a **modular monolith**:
 a **FastAPI** backend (async **SQLAlchemy 2.0** + **Alembic**), an in-process
@@ -78,12 +78,15 @@ alembic check                   # CI gate: fails if models and migrations drift
 
 ```bash
 cd backend
-pytest          # 34 unit + e2e tests, runs on SQLite (no DB server needed)
+pytest          # 39 unit + e2e tests, runs on SQLite (no DB server needed)
+pytest --cov=app --cov-report=term-missing   # coverage (CI gate: --cov-fail-under=60)
 ruff check .    # lint
+mypy            # static type check (CI gate)
 ```
 
-CI (`.github/workflows/ci.yml`) runs ruff + pytest on every push, **and** applies
-the Alembic migrations against a real PostgreSQL service to prove they're clean.
+CI (`.github/workflows/ci.yml`) runs ruff + mypy + pytest (with a coverage gate) on
+every push, **and** applies the Alembic migrations against a real PostgreSQL service
+to prove they're clean. Dependency bumps are automated via Dependabot.
 
 ---
 
@@ -121,13 +124,16 @@ konstanta-platform/
 - **Modular monolith** with a strict inward dependency rule (routers → services → models).
 - **Async everywhere** — DB, HTTP, bot — so slow I/O never blocks the event loop.
 - **In-memory read cache** for hot public endpoints (jobs/categories/reviews),
-  warmed at startup and mutated in place on writes.
+  warmed at startup and mutated in place on writes — layered with HTTP
+  `ETag` / `Cache-Control` so browsers and CDNs revalidate with cheap `304`s.
 - **Atomic ticket claim/complete** — invariants encoded in single `UPDATE … WHERE`
   statements; safe across the browser panel and the Telegram button concurrently.
 - **Pluggable AI** — swap OpenAI ↔ Gemini via config; provider behind one interface.
 - **Event-driven notifications** — candidate status updates and job-alert fan-out
   run fire-and-forget (Email + Telegram) off the request path.
 - **Role-based auth** — staff (admin/worker) and candidate realms over one JWT mechanism.
+- **Operational hardening** — correlation `X-Request-ID` + access logging on every
+  request, security response headers, paginated admin dumps, and `mypy` type-checking in CI.
 
 ---
 

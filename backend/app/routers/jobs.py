@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, File, UploadFile
+from fastapi import APIRouter, Depends, File, Request, Response, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.deps import require_role
+from app.core.http_cache import conditional_json
 from app.db.session import get_session
 from app.schemas.job import JobForm
 from app.services import job_service, notification_service, storage
@@ -12,9 +13,10 @@ router = APIRouter(tags=["jobs"])
 
 
 @router.get("/jobs")
-def get_jobs(site: str | None = None) -> list:
-    """Public job list (cache-served). ``?site=`` filters to a candidate site."""
-    return job_service.get_public_jobs(site)
+def get_jobs(request: Request, site: str | None = None) -> Response:
+    """Public job list (cache-served, with ETag + max-age). ``?site=`` filters to
+    a candidate site; a matching ``If-None-Match`` gets a 304."""
+    return conditional_json(request, job_service.get_public_jobs(site))
 
 
 @router.post("/jobs", dependencies=[Depends(require_role("admin"))])

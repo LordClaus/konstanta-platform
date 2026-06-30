@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.http_cache import conditional_json
 from app.db.session import get_session
 from app.schemas.review import ReviewForm
 from app.services import review_service
@@ -13,8 +14,9 @@ router = APIRouter(tags=["reviews"])
 
 
 @router.get("/reviews")
-def get_reviews(site: str | None = None) -> list:
-    return review_service.get_public_reviews(site)
+def get_reviews(request: Request, site: str | None = None) -> Response:
+    """Public reviews (cache-served, with ETag + max-age; 304 on If-None-Match)."""
+    return conditional_json(request, review_service.get_public_reviews(site))
 
 
 @router.post("/reviews")

@@ -55,7 +55,9 @@ imports from `routers`. This keeps the business logic unit-testable without HTTP
 | core | `app/core/security.py` | bcrypt hashing, JWT issue/verify, Google OAuth, age gate |
 | core | `app/core/deps.py` | `get_current_staff`, `require_role`, `get_current_candidate` |
 | core | `app/core/cache.py` | `AppCache` — in-memory read cache for hot public endpoints |
+| core | `app/core/http_cache.py` | ETag + Cache-Control + 304 for the cached public reads |
 | core | `app/core/rate_limit.py` | slowapi limiter |
+| core | `app/core/middleware.py` | correlation `X-Request-ID` + access logging; security headers |
 | core | `app/core/constants.py` | site keys, default categories, pure helpers (slug, cities…) |
 | services | `app/services/*` | business logic per domain (see layering diagram) |
 | services | `app/services/ai/*` | provider-agnostic AI (Strategy + Factory) |
@@ -67,7 +69,7 @@ imports from `routers`. This keeps the business logic unit-testable without HTTP
 ## 3. Request lifecycle (example: `POST /jobs`)
 
 ```
-client → CORS → slowapi → router(jobs.create_job)
+client → security headers → request-id + access log → CORS → slowapi → router(jobs.create_job)
                               │  Depends(require_role("admin"))   ← JWT verified
                               │  Depends(get_session)             ← async DB session
                               ▼
@@ -81,7 +83,10 @@ client → CORS → slowapi → router(jobs.create_job)
 
 Reads (`GET /jobs`, `/categories`, `/reviews`) skip the database entirely and are
 served from `AppCache`, which is warmed at startup and mutated in place on every
-write — the platform's main web-performance optimization.
+write — the platform's main web-performance optimization. On top of that, those
+endpoints emit an HTTP `ETag` + `Cache-Control: max-age` (`core/http_cache.py`), so
+browsers and any CDN/proxy revalidate cheaply — a matching `If-None-Match` returns
+`304 Not Modified` with no body.
 
 ---
 
