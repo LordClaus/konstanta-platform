@@ -13,7 +13,7 @@ jobs:
       run:
         working-directory: backend
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -52,7 +52,7 @@ jobs:
       DATABASE_URL: postgresql+asyncpg://konstanta:konstanta@localhost:5432/konstanta
       JWT_SECRET: ci-secret-that-is-at-least-32-bytes-long!!
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
