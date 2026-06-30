@@ -20,6 +20,14 @@ def test_if_none_match_returns_304(client):
     assert again.headers.get("ETag") == etag
 
 
+def test_if_none_match_accepts_wildcard_and_list(client):
+    etag = client.get("/categories").headers["ETag"]
+    # RFC 7232: "*" matches any existing representation.
+    assert client.get("/categories", headers={"If-None-Match": "*"}).status_code == 304
+    # A comma-separated list that contains our ETag also matches.
+    assert client.get("/categories", headers={"If-None-Match": f'W/"nope", {etag}'}).status_code == 304
+
+
 def test_changed_payload_invalidates_etag(client, admin_headers):
     before = client.get("/categories").headers["ETag"]
 

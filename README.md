@@ -4,7 +4,7 @@
 ![Python](https://img.shields.io/badge/python-3.12-blue)
 ![FastAPI](https://img.shields.io/badge/FastAPI-async-009688)
 ![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-2.0-red)
-![Tests](https://img.shields.io/badge/tests-39%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-40%20passing-brightgreen)
 
 A production-style recruitment platform built as a **modular monolith**:
 a **FastAPI** backend (async **SQLAlchemy 2.0** + **Alembic**), an in-process
@@ -78,7 +78,7 @@ alembic check                   # CI gate: fails if models and migrations drift
 
 ```bash
 cd backend
-pytest          # 39 unit + e2e tests, runs on SQLite (no DB server needed)
+pytest          # 40 unit + e2e tests, runs on SQLite (no DB server needed)
 pytest --cov=app --cov-report=term-missing   # coverage (CI gate: --cov-fail-under=60)
 ruff check .    # lint
 mypy            # static type check (CI gate)

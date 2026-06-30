@@ -374,10 +374,18 @@ async function syncDatabase(showToast = false) {
     lucide.createIcons();
 
     try {
-        const res = await fetch(`${API_BASE}/sync-db`, { headers: { 'Authorization': `Bearer ${authToken}` } });
-        if (res.status === 401) { handleAuthExpired(); return; }
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const applications = await res.json();
+        // Page through the bounded /sync-db endpoint until a short page ends it,
+        // so the panel shows every application (not just the newest page).
+        const PAGE_SIZE = 500;
+        const applications = [];
+        for (let offset = 0; ; offset += PAGE_SIZE) {
+            const res = await fetch(`${API_BASE}/sync-db?limit=${PAGE_SIZE}&offset=${offset}`, { headers: { 'Authorization': `Bearer ${authToken}` } });
+            if (res.status === 401) { handleAuthExpired(); return; }
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const page = await res.json();
+            applications.push(...page);
+            if (page.length < PAGE_SIZE) break;
+        }
 
         clearColumns();
         cardRegistry.clear();
